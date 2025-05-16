@@ -1,25 +1,24 @@
-// src\app\api\globalusers\[id]\route.ts
+// src/app/api/globalusers/[id]/route.ts
 
-// GET user specific data
 import { NextResponse } from "next/server";
 import { user } from "@/app/utils/db";
 
-export function GET(request: Request, { params }: { params: { id: string } }) {
-  const foundUser = user.find((u) => u.id === parseInt(params.id));
+// GET user specific data
+export function GET(request: Request, context: { params: { id: string } }) {
+  const foundUser = user.find((u) => u.id === parseInt(context.params.id));
   if (!foundUser) {
     return NextResponse.json({ error: "User not found" }, { status: 404 });
   }
-
   return NextResponse.json(foundUser, { status: 200 });
 }
 
-// UPDATE[PUT] user specific data
+// UPDATE user specific data
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
   const payload = await request.json();
-  const userId = parseInt(params.id);
+  const userId = parseInt(context.params.id);
   const index = user.findIndex((u) => u.id === userId);
 
   if (index === -1) {
@@ -36,7 +35,6 @@ export async function PUT(
     );
   }
 
-  // Simulate update
   user[index] = { id: userId, ...payload };
 
   return NextResponse.json(
@@ -45,13 +43,12 @@ export async function PUT(
   );
 }
 
-
-
+// DELETE user
 export function DELETE(
   _request: Request,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
-  const id = params.id;
+  const id = context.params.id;
 
   if (id) {
     return NextResponse.json(
@@ -65,4 +62,3 @@ export function DELETE(
     );
   }
 }
-
